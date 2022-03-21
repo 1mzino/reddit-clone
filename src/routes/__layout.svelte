@@ -2,13 +2,15 @@
 	import '../app.css';
 </script>
 
-<div class="min-h-screen min-w-screen overflow-x-hidden">
-	<div class="border-b-[1px] px-6">
+<div class="flex flex-col min-h-screen min-w-screen overflow-x-hidden">
+	<div class="border-b-[1px] px-2 lg:px-6">
 		<nav
-			class="mx-auto max-w-screen-2xl flex flex-row h-[52px]  items-center justify-between border-gray-200"
+			class="mx-auto max-w-screen-2xl flex flex-row h-[52px] items-center justify-between border-gray-200"
 		>
 			<!-- logo -->
-			<div class="flex flex-row items-center space-x-2">
+			<div
+				class="flex flex-row items-center space-x-2 py-1 px-2 cursor-pointer border-[1px] border-transparent  hover:border-gray-200 rounded-md active:bg-gray-100"
+			>
 				<svg class="h-8 w-8" viewBox="0 0 20 20">
 					>
 					<circle fill="#FF4500" cx="10" cy="10" r="10" /><path
@@ -47,13 +49,14 @@
 			</form>
 
 			<!-- account -->
+			<!-- if authenticated=false -->
 			<div class="flex flex-row items-center space-x-4">
 				<button
-					class="hidden lg:inline-block font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-600 text-sky-600 hover:bg-slate-100"
+					class="hidden lg:inline-block font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-600 text-sky-600 hover:bg-sky-50 active:bg-sky-100"
 					>Log In</button
 				>
 				<button
-					class="hidden lg:inline-block font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-600 bg-sky-600 hover:bg-sky-500 hover:border-sky-500 text-white"
+					class="hidden lg:inline-block font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-700 bg-sky-700 hover:bg-sky-600 hover:border-sky-500 active:bg-sky-500 active:border-sky-500 text-white"
 					>Sign Up</button
 				>
 			</div>
