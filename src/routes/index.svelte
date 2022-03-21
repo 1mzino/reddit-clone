@@ -5,7 +5,7 @@
 	<!-- banner -->
 	<div class="h-[200px] bg-[#ff3d00]" />
 	<!-- subreddit title -->
-	<div class=" border-b-[1px] border-gray-200">
+	<div class=" border-b-[1px] z-10 border-gray-200">
 		<div class="flex flex-row items-center gap-4 px-6 mb-2 -mt-4">
 			<div class="rounded-full p-1.5 bg-white border-4 border-white">
 				<!-- subreddit logo -->

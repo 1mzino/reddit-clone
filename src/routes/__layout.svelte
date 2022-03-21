@@ -4,9 +4,7 @@
 
 <div class="flex flex-col min-h-screen min-w-screen overflow-x-hidden">
 	<div class="border-b-[1px] px-2 lg:px-6">
-		<nav
-			class="mx-auto max-w-screen-2xl flex flex-row h-[52px] items-center justify-between border-gray-200"
-		>
+		<nav class="flex flex-row h-[52px] items-center justify-between border-gray-200">
 			<!-- logo -->
 			<div
 				class="flex flex-row items-center space-x-2 py-1 px-2 cursor-pointer border-[1px] border-transparent  hover:border-gray-200 rounded-md active:bg-gray-100"
