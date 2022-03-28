@@ -1,26 +1,23 @@
 <script>
+	import supabase from '$lib/supabase';
 	import { session } from '$app/stores';
-	import { auth, setAuthCookie, unsetAuthCookie } from '$lib/auth';
 
 	// import { getProfileById } from '$lib/data/queries/users/getProfile';
 
-	// import { user } from '$lib/store/authStore';
 	// import { profile } from '$lib/store/profileStore';
 
 	import '../app.css';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import CreateUsername from '$lib/components/CreateUsername.svelte';
+	import { user } from '$lib/store/authStore';
+	import { profile } from '$lib/store/profileStore';
 
-	auth.onAuthStateChange(async (event, _session) => {
-		if (event !== 'SIGNED_OUT') {
-			await setAuthCookie(_session);
-			session.set({ user: _session.user, authenticated: !!_session.user });
-		} else {
-			session.set({ user: undefined, authenticated: false });
-			await unsetAuthCookie();
-		}
-	});
+	export const loadProfile = async (userId) => {
+		let { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+		return data;
+	};
+
 	let isMenuOpen = false;
 
 	// toggle show menu
@@ -31,6 +28,8 @@
 	const handleCloseMenu = () => {
 		isMenuOpen = false;
 	};
+
+	console.log($session);
 </script>
 
 <div class="flex flex-col min-h-screen w-screen touch-manipulation">
@@ -40,7 +39,9 @@
 	<slot />
 
 	<!-- <CreateUsername /> -->
-
+	<!-- {#if userSession?.user && !userSession?.profile?.username}
+		<p>SET USERNAME</p>
+	{/if} -->
 	<!-- Menu as 'portal' -->
 	<Menu {handleMenuClick} {isMenuOpen} />
 </div>

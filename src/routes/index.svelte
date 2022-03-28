@@ -1,5 +1,6 @@
 <script>
 	import { session } from '$app/stores';
+	console.log('userSession', $session);
 	import SubredditDetail from '$lib/components/SubredditDetail.svelte';
 	import { user } from '$lib/store/authStore';
 
@@ -9,9 +10,6 @@
 	};
 </script>
 
-{#if $session?.user?.email}
-	<p>current session {$session.user.email}</p>
-{/if}
 <div class="flex flex-col">
 	<!-- banner -->
 	<div class="h-[80px] md:h-[140px] lg:h-[200px] bg-redditOrange" />

@@ -1,5 +1,8 @@
 <script>
+	// @ts-nocheck
+
 	import { user } from '$lib/store/authStore';
+	import { session } from '$app/stores';
 
 	import { goto } from '$app/navigation';
 	import supabase from '$lib/supabase';
@@ -27,7 +30,7 @@
 				placeholder="Search Reddit"
 			/>
 
-			{#if !$user}
+			{#if !$session?.user}
 				<button
 					on:click={handleSignUp}
 					class="w-full bg-blue-500 py-2 text-sm text-white font-semibold rounded-full"
