@@ -5,8 +5,6 @@
 		dispatch('handleMenuClick');
 	};
 
-	export let setUsername = false;
-
 	import { session } from '$app/stores';
 	import { signOut } from '$lib/utils/auth';
 	import { goto } from '$app/navigation';
@@ -50,9 +48,6 @@
 			{/if}
 		</div>
 
-		<div
-			on:click={handleMenuClick}
-			class={`grow ${!setUsername ? 'bg-black opacity-90' : 'bg-none opacity-0'} touch-none`}
-		/>
+		<div on:click={handleMenuClick} class={`grow bg-black opacity-90 touch-none`} />
 	</div>
 {/if}
