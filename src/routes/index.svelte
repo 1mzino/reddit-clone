@@ -1,8 +1,21 @@
+<script context="module">
+	export async function load({ session }) {
+		if (session.user.authenticated && !session.user.username) {
+			return {
+				props: {
+					setUsername: true
+				}
+			};
+		}
+		return {
+			props: {}
+		};
+	}
+</script>
+
 <script>
-	import { session } from '$app/stores';
-	console.log('userSession', $session);
+	export let setUsername = false;
 	import SubredditDetail from '$lib/components/SubredditDetail.svelte';
-	import { user } from '$lib/store/authStore';
 
 	let tabs = 'POSTS';
 	const handleTabSwitch = (e) => {
@@ -10,7 +23,7 @@
 	};
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col grow">
 	<!-- banner -->
 	<div class="h-[80px] md:h-[140px] lg:h-[200px] bg-redditOrange" />
 	<!-- subreddit detail component -->

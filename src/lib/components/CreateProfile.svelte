@@ -4,7 +4,7 @@
 
 	export let email;
 	export let handleRedirect;
-	export let handleSignUp;
+	import { signUp } from '$lib/utils/auth';
 
 	const { form, handleChange, handleSubmit } = createForm({
 		initialValues: {
@@ -13,7 +13,7 @@
 			password: ''
 		},
 		onSubmit: async (values) => {
-			const user = await handleSignUp(values.email, values.password, values.username);
+			const user = await signUp(values.email, values.password, values.username);
 			if (user) return goto('/');
 		}
 	});

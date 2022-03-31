@@ -1,7 +1,9 @@
 <script>
+	import { goto } from '$app/navigation';
+
 	import { createForm } from 'svelte-forms-lib';
 	export let handleRedirect;
-	export let handleGoogleAuth;
+	export let googleAuth;
 	export let email;
 </script>
 
@@ -18,7 +20,7 @@
 	<!-- social providers -->
 	<div class="mt-8 space-y-6">
 		<button
-			on:click={handleGoogleAuth}
+			on:click={googleAuth}
 			class="relative rounded-full w-full py-2.5 border-[1px] border-gray-200 active:border-blue-200 active:bg-blue-50 text-gray-600 font-medium"
 		>
 			<p class="flex justify-center items-center text-[15px]">
@@ -74,7 +76,7 @@
 	</form>
 	<p class="mt-12 text-sm">
 		Already a redditor? <span
-			on:click={() => handleRedirect('signIn')}
+			on:click={() => goto('/auth/signin')}
 			class="cursor-pointer text-blue-600 font-medium">Log In</span
 		>
 	</p>

@@ -1,23 +1,34 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { session } from '$app/stores';
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
+
+	const openModal = (e) => {
+		dispatch('openModal', e);
+	};
 
 	export let isMenuOpen;
-	export let handleMenuClick;
-	export let handleCloseMenu;
+	const handleMenuClick = (e) => {
+		dispatch('handleMenuClick', e);
+	};
 
-	const handleClick = () => {
+	const handleLogoClick = (e) => {
+		handleMenuClick(e);
 		goto('/');
-		handleCloseMenu();
 	};
 </script>
 
 <nav
-	class={`sticky top-0 z-50 flex flex-row py-2 items-center justify-between bg-redditDarkBlue lg:bg-white lg:border-gray-200 border-b-[1px] px-3 lg:px-6 ${
+	class={`sticky top-0 z-30 flex flex-row py-2 items-center justify-between bg-redditDarkBlue lg:bg-white lg:border-gray-200 border-b-[1px] px-3 lg:px-6 ${
 		isMenuOpen ? ' border-transparent' : 'border-gray-800 drop-shadow-xl'
 	}`}
 >
 	<!-- LOGO -->
-	<div on:click={handleClick} class="flex flex-row items-center space-x-2 cursor-pointer">
+	<div
+		on:click={() => handleLogoClick('CLOSE')}
+		class="flex flex-row items-center space-x-2 cursor-pointer"
+	>
 		<!-- reddit logo image -->
 		<svg class="h-8 w-8" viewBox="0 0 20 20">
 			>
@@ -98,13 +109,19 @@
 
 	<!-- DESKTOP AUTHENTICATION -->
 	<div class="hidden lg:flex flex-row items-center space-x-4">
-		<button
-			class=" font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-600 text-sky-600 hover:bg-sky-50 active:bg-sky-100"
-			>Log In</button
-		>
-		<button
-			class="font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-700 bg-sky-700 hover:bg-sky-600 hover:border-sky-500 active:bg--500 active:border-sky-500 text-white"
-			>Sign Up</button
-		>
+		{#if !$session.user.authenticated}
+			<button
+				on:click={() => openModal('SIGN-IN')}
+				class=" font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-600 text-sky-600 hover:bg-sky-50 active:bg-sky-100"
+				>Log In</button
+			>
+			<button
+				on:click={() => openModal('SIGN-UP')}
+				class="font-semibold text-sm rounded-full px-8 py-1.5 border-[1px] border-sky-700 bg-sky-700 hover:bg-sky-600 hover:border-sky-500 active:bg--500 active:border-sky-500 text-white"
+				>Sign Up</button
+			>
+		{:else}
+			<p>profile</p>
+		{/if}
 	</div>
 </nav>
