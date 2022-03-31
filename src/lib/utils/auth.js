@@ -57,8 +57,8 @@ export const signOut = async () => {
 
 export const googleAuth = async () => {
 	const { error } = await supabase.auth.signIn(
-		{ provider: 'google' }
-		// { redirectTo: 'http://localhost:3000/provider' }
+		{ provider: 'google' },
+		{ redirectTo: 'http://localhost:3000/oauth' }
 	);
 
 	if (!error) {
