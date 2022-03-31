@@ -1,20 +1,4 @@
-<script context="module">
-	export async function load({ session }) {
-		if (session.user.authenticated && !session.user.username) {
-			return {
-				props: {
-					setUsername: true
-				}
-			};
-		}
-		return {
-			props: {}
-		};
-	}
-</script>
-
 <script>
-	export let setUsername = false;
 	import SubredditDetail from '$lib/components/SubredditDetail.svelte';
 
 	let tabs = 'POSTS';
