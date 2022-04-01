@@ -1,8 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { session } from '$app/stores';
+	import { signOut } from '$lib/utils/auth';
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
+
+	export let showLoading;
 
 	const openModal = (e) => {
 		dispatch('openModal', e);
@@ -16,6 +19,11 @@
 	const handleLogoClick = (e) => {
 		handleMenuClick(e);
 		goto('/');
+	};
+
+	const handleSignOut = () => {
+		goto('/');
+		signOut();
 	};
 </script>
 
@@ -70,31 +78,33 @@
         </button> -->
 
 		<!-- MENU BUTTON -->
-		<button on:click={handleMenuClick} class="h-8 w-8 lg:hidden">
-			{#if !isMenuOpen}
-				<!-- MENU CLOSED -->
-				<svg class="h-5 w-5 mx-auto fill-white" viewBox="0 0 20 16">
-					><path
-						d="m19.1961 8.6h-18.08612c-.401914 0-.803828-.3-.803828-.8s.401914-.8.803828-.8h18.08612c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
-					/><path
-						d="m16.1818 1.6h-12.05742c-.40191 0-.80382-.4-.80382-.8s.40191-.8.80382-.8h12.05742c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
-					/><path
-						d="m16.1818 15.6h-12.05742c-.40191 0-.80382-.3-.80382-.8s.30143-.8.80382-.8h12.05742c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
-					/></svg
-				>
-			{:else}
-				<!-- MENU OPEN -->
-				<svg
-					class="h-5 w-5 mx-auto fill-gray-500"
-					viewBox="0 0 18 18"
-					xmlns="http://www.w3.org/2000/svg"
-					><path
-						d="m1.28033.21967c-.292893-.2928933-.767767-.2928933-1.06066 0-.2928933.292893-.2928933.767767 0 1.06066l7.46967 7.46967-7.46967 7.4697c-.2928933.2929-.2928933.7677 0 1.0606.292893.2929.767767.2929 1.06066 0l7.46967-7.46964 7.4697 7.46964c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-7.46964-7.4697 7.46964-7.46967c.2929-.292893.2929-.767767 0-1.06066-.2929-.2928933-.7677-.2928933-1.0606 0l-7.4697 7.46967z"
-						fill="inherit"
-					/></svg
-				>
-			{/if}
-		</button>
+		{#if !showLoading}
+			<button on:click={handleMenuClick} class="h-8 w-8 lg:hidden">
+				{#if !isMenuOpen}
+					<!-- MENU CLOSED -->
+					<svg class="h-5 w-5 mx-auto fill-white" viewBox="0 0 20 16">
+						><path
+							d="m19.1961 8.6h-18.08612c-.401914 0-.803828-.3-.803828-.8s.401914-.8.803828-.8h18.08612c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
+						/><path
+							d="m16.1818 1.6h-12.05742c-.40191 0-.80382-.4-.80382-.8s.40191-.8.80382-.8h12.05742c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
+						/><path
+							d="m16.1818 15.6h-12.05742c-.40191 0-.80382-.3-.80382-.8s.30143-.8.80382-.8h12.05742c.4019 0 .8038.3.8038.8s-.4019.8-.8038.8z"
+						/></svg
+					>
+				{:else}
+					<!-- MENU OPEN -->
+					<svg
+						class="h-5 w-5 mx-auto fill-gray-500"
+						viewBox="0 0 18 18"
+						xmlns="http://www.w3.org/2000/svg"
+						><path
+							d="m1.28033.21967c-.292893-.2928933-.767767-.2928933-1.06066 0-.2928933.292893-.2928933.767767 0 1.06066l7.46967 7.46967-7.46967 7.4697c-.2928933.2929-.2928933.7677 0 1.0606.292893.2929.767767.2929 1.06066 0l7.46967-7.46964 7.4697 7.46964c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-7.46964-7.4697 7.46964-7.46967c.2929-.292893.2929-.767767 0-1.06066-.2929-.2928933-.7677-.2928933-1.0606 0l-7.4697 7.46967z"
+							fill="inherit"
+						/></svg
+					>
+				{/if}
+			</button>
+		{/if}
 	</div>
 
 	<!-- DESKTOP SEARCH BAR -->
@@ -121,7 +131,7 @@
 				>Sign Up</button
 			>
 		{:else}
-			<p>profile</p>
+			<button on:click={handleSignOut}>sign out</button>
 		{/if}
 	</div>
 </nav>

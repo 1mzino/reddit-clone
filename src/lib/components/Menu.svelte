@@ -13,7 +13,7 @@
 
 	const handleSignUp = () => {
 		handleMenuClick();
-		goto('/auth/signup');
+		goto('/auth');
 	};
 
 	const handleSignOut = async () => {
@@ -24,8 +24,10 @@
 </script>
 
 {#if isMenuOpen}
-	<div class="fixed top-[49px] z-10 lg:hidden flex flex-col h-full w-full">
-		<div class="h-30 flex flex-col space-y-4 px-3 pt-3 pb-6 bg-redditDarkBlue">
+	<div class="fixed top-[49px]  lg:hidden flex flex-col h-full w-full">
+		<div on:click={handleMenuClick} class="fixed top-0 h-full w-full bg-black opacity-90 z-20" />
+
+		<div class="h-30 flex flex-col space-y-4 px-3 pt-3 pb-6 bg-redditDarkBlue z-30">
 			<input
 				class="w-full bg-gray-700 text-gray-300 py-2 pl-6 text-sm rounded-full focus-visible:outline-none"
 				placeholder="Search Reddit"
@@ -47,7 +49,5 @@
 				</button>
 			{/if}
 		</div>
-
-		<div on:click={handleMenuClick} class={`grow bg-black opacity-90 touch-none`} />
 	</div>
 {/if}

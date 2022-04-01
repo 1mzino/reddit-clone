@@ -1,13 +1,20 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { page, session } from '$app/stores';
 	import { createForm } from 'svelte-forms-lib';
-
-	const handleRedirect = () => {
-		return goto('/auth/signup');
-	};
 
 	import { signIn, googleAuth } from '$lib/utils/auth';
 
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
+	const handleSignIn = () => {
+		dispatch('closeModal', 'CLOSE');
+		goto('/');
+	};
+
+	$: oauth = $page.url.search;
 	const { form, handleChange, handleSubmit } = createForm({
 		initialValues: {
 			email: '',
@@ -15,15 +22,15 @@
 		},
 		onSubmit: async (values) => {
 			const user = await signIn(values.email, values.password);
-			if (user) return goto('/');
+			if (user) return handleSignIn();
 		}
 	});
 </script>
 
-<div class="flex flex-col gap-4 py-6 px-4">
-	<div class="flex flex-col space-y-2">
-		<h1 class="text-xl font-semibold">Log in</h1>
-		<p class="text-sm">
+<div class="flex flex-col gap-2 py-6 px-4">
+	<div class="space-y-1">
+		<h1 class="text-xl lg:text-md font-semibold">Log in</h1>
+		<p class="text-sm lg:text-xs text-gray-600">
 			By continuing, you are setting up a Reddit account and agree to our <span
 				class="text-blue-500 font-medium"
 				>User Agreement
@@ -33,12 +40,13 @@
 	</div>
 
 	<!-- social providers -->
-	<div class="mb-0 mt-4 space-y-6">
+	<div class="mt-8 space-y-4 lg:w-[60%]">
 		<button
+			disabled={$page.url.search === '?oauth' ? true : false}
 			on:click={googleAuth}
 			class="relative rounded-full w-full py-2.5 border-[1px] border-gray-200 active:border-blue-200 active:bg-blue-50 text-gray-600 font-medium"
 		>
-			<p class="flex justify-center items-center text-[15px]">
+			<p class="flex justify-center items-center text-sm lg:text-xs">
 				<span class="absolute left-4">
 					<svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 						<g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -61,45 +69,65 @@
 						</g>
 					</svg>
 				</span>
-
 				Continue with Google
 			</p>
 		</button>
 
-		<div class="flex flex-row items-center space-x-6 text-sm text-gray-400 font-medium">
+		{#if $page.url.search === '?oauth'}
+			<p class="text-sm lg:text-xs text-blue-500 font-medium animate-pulse">
+				You are now logged in. You will soon be redirected.
+			</p>
+		{/if}
+
+		<div class="mt-4 flex flex-row items-center space-x-6 text-sm text-gray-400 font-medium">
 			<div class="w-[50%] border-b-[1px] border-gray-200" />
 			<p>OR</p>
 			<div class="w-[50%] border-b-[1px] border-gray-200" />
 		</div>
 	</div>
-
-	<!-- sign up with email -->
-	<form on:submit={handleSubmit} class="flex flex-col gap-4">
+	<!-- sign in with email -->
+	<form on:submit={handleSubmit} class="space-y-4 lg:max-w-[60%]">
 		<input
 			on:change={handleChange}
+			disabled={$page.url.search === '?oauth' ? true : false}
 			bind:value={$form.email}
-			class="rounded-full w-full bg-gray-100 px-4 py-2 placeholder:text-gray-600"
+			class={`rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 lg:${
+				$page.url.search === '?oauth' ? 'bg-yellow-100' : 'bg-white'
+			} lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600`}
 			type="text"
-			placeholder="Email"
+			placeholder={$session.user.email ? $session.user.email : 'Email'}
 		/>
 
 		<input
 			on:change={handleChange}
+			disabled={$page.url.search === '?oauth' ? true : false}
 			bind:value={$form.password}
-			class="rounded-full w-full bg-gray-100 px-4 py-2 placeholder:text-gray-600"
+			class={`rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 ${
+				$page.url.search === '?oauth' ? 'lg:bg-yellow-100' : 'lg:bg-white'
+			} lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600`}
 			type="password"
-			placeholder="Password"
+			placeholder={$session.user.authenticated ? '********' : 'Password'}
 		/>
 
 		<button
 			type="submit"
-			class="rounded-full w-full py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717] text-white font-bold"
-			>Log in</button
+			disabled={$page.url.search === '?oauth' ? true : false}
+			class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
+			lg:from-sky-600 lg:to-sky-600 text-white font-bold"
 		>
+			{#if $page.url.search === '?oauth'}
+				Logging In
+			{:else}
+				Log In
+			{/if}
+		</button>
 	</form>
-	<p class="mt-12 text-sm">
-		New to Reddit? <span on:click={handleRedirect} class="cursor-pointer text-blue-600 font-medium"
-			>Sign up</span
+	<p class="mt-12 text-sm text-gray-800 lg:text-xs">
+		New to Reddit? <span
+			on:click={() => dispatch('handleAuthState', 'SIGN-UP')}
+			class="cursor-pointer text-blue-600 font-medium"
 		>
+			Sign up
+		</span>
 	</p>
 </div>

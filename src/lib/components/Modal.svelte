@@ -2,18 +2,16 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 
+	import SignUp from './SignUp.svelte';
+	import SignIn from './SignIn.svelte';
+
 	const closeModal = (e) => {
 		dispatch('closeModal', e);
 	};
 
-	import SignUp from './SignUp.svelte';
 	export let authState = 'SIGN-UP';
-
-	let email;
-	import { googleAuth } from '$lib/utils/auth';
-	import SignIn from './SignIn.svelte';
-	const handleRedirect = (newState) => {
-		authState = newState;
+	const handleAuthState = (e) => {
+		authState = e.detail;
 	};
 </script>
 
@@ -24,11 +22,14 @@
 		class="fixed top-0 h-full w-full bg-black opacity-90 z-40"
 	/>
 	<!-- modal content -->
-	<div class="p-4 rounded-2xl bg-white opacity-100 z-50">
-		{#if authState === 'SIGN-UP'}
-			<SignUp bind:email {googleAuth} {handleRedirect} />
-		{:else}
-			<SignIn />
-		{/if}
+	<div class="flex rounded-md h-[600px] w-[705px] bg-white z-50">
+		<div class="hidden lg:block bg-[url('/authBg.png')] w-1/4 h-full rounded-l-md" />
+		<div class="w-3/4 px-4">
+			{#if authState === 'SIGN-UP'}
+				<SignUp on:handleAuthState={handleAuthState} />
+			{:else}
+				<SignIn on:handleAuthState={handleAuthState} />
+			{/if}
+		</div>
 	</div>
 </div>
