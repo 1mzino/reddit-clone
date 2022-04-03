@@ -9,7 +9,7 @@
 	import { signOut } from '$lib/utils/auth';
 	import { goto } from '$app/navigation';
 
-	export let isMenuOpen;
+	export let showMenu;
 
 	const handleSignUp = () => {
 		handleMenuClick();
@@ -23,7 +23,7 @@
 	};
 </script>
 
-{#if isMenuOpen}
+{#if showMenu}
 	<div class="fixed top-[49px]  lg:hidden flex flex-col h-full w-full">
 		<div on:click={handleMenuClick} class="fixed top-0 h-full w-full bg-black opacity-90 z-20" />
 

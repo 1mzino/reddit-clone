@@ -11,7 +11,7 @@
 		dispatch('openModal', e);
 	};
 
-	export let isMenuOpen;
+	export let showMenu;
 	const handleMenuClick = (e) => {
 		dispatch('handleMenuClick', e);
 	};
@@ -29,7 +29,7 @@
 
 <nav
 	class={`sticky top-0 z-30 flex flex-row py-2 items-center justify-between bg-redditDarkBlue lg:bg-white lg:border-gray-200 border-b-[1px] px-3 lg:px-6 ${
-		isMenuOpen ? ' border-transparent' : 'border-gray-800 drop-shadow-xl'
+		showMenu ? ' border-transparent' : 'border-gray-800 drop-shadow-xl'
 	}`}
 >
 	<!-- LOGO -->
@@ -80,7 +80,7 @@
 		<!-- MENU BUTTON -->
 		{#if !showLoading}
 			<button on:click={handleMenuClick} class="h-8 w-8 lg:hidden">
-				{#if !isMenuOpen}
+				{#if !showMenu}
 					<!-- MENU CLOSED -->
 					<svg class="h-5 w-5 mx-auto fill-white" viewBox="0 0 20 16">
 						><path
