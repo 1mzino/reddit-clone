@@ -13,13 +13,11 @@
 	import { onMount } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
 
-	let promptUsername = false;
-	$: showUsername = promptUsername;
-	let isMenuOpen = false;
-
-	let authState = $page.url.search === '?oauth' ? 'SIGN-IN' : 'SIGN-UP';
-	let showAuthModal = $page.url.search === '?oauth' ? true : false;
-	let showLoading = $page.url.search === '?oauth' ? true : false;
+	let authState = $page.url.search ? 'SIGN-IN' : 'SIGN-UP';
+	let showAuthModal = $page.url.search ? true : false;
+	let showLoading = $page.url.search ? true : false;
+	let showMenu = false;
+	let showUsername = false;
 
 	onMount(() => {
 		if ($page.url.search === '?oauth') {
@@ -27,7 +25,7 @@
 		}
 
 		if ($session.user.authenticated && !$session.user.username) {
-			return (promptUsername = true);
+			return (showUsername = true);
 		}
 	});
 
@@ -42,10 +40,10 @@
 
 	const toggleMenu = (e) => {
 		if (e.detail === 'CLOSE') {
-			return (isMenuOpen = false);
+			return (showMenu = false);
 		}
 
-		isMenuOpen = !isMenuOpen;
+		showMenu = !showMenu;
 	};
 
 	supabase.auth.onAuthStateChange(async (event, _session) => {
@@ -64,23 +62,18 @@
 </script>
 
 <div class="flex flex-col min-h-screen w-screen bg-white touch-manipulation">
-	<Navbar
-		on:openModal={toggleAuthModal}
-		on:handleMenuClick={toggleMenu}
-		{isMenuOpen}
-		{showLoading}
-	/>
+	<Navbar on:openModal={toggleAuthModal} on:handleMenuClick={toggleMenu} {showMenu} {showLoading} />
 
 	<!-- children -->
 
 	<slot />
 
 	<!-- Menu as 'portal' -->
-	<Menu on:handleMenuClick={toggleMenu} {isMenuOpen} />
+	<Menu on:handleMenuClick={toggleMenu} {showMenu} />
 
 	<!-- Desktop Auth (Mobile Auth uses Auth Routes) -->
 	{#if showAuthModal}
-		<Modal {authState} on:closeModal={toggleAuthModal} />
+		<Modal {authState} on:handleAuthState={toggleAuthModal} on:closeModal={toggleAuthModal} />
 	{/if}
 
 	<!-- Mobile oauth loading -->
@@ -103,12 +96,12 @@
 	{#if !$page.url.search && showUsername}
 		<div class="fixed top-0 z-40 flex flex-col h-full w-full touch-none">
 			<div
-				transition:fade={{ duration: 1 }}
+				transition:fade|local={{ duration: 100 }}
 				class="fixed top-0 h-full w-full z-40 bg-black opacity-90"
 			/>
 			<div class="flex justify-center items-center">
 				<div
-					transition:slide
+					in:slide|local
 					class="fixed bottom-0 lg:top-[33%] flex flex-col items-center h-max w-full lg:w-max lg:px-10 lg:py-6 py-8 px-2 gap-6 bg-white z-50 rounded-t-2xl lg:rounded-2xl"
 				>
 					<img
