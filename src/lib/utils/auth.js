@@ -19,6 +19,13 @@ export const signUp = async (email, password, username) => {
 		});
 	}
 
+	if (error.message === 'Database error saving new user') {
+		return errorMapper({
+			message: 'Username is taken',
+			code: 400
+		});
+	}
+
 	return errorMapper({
 		message: error.message,
 		code: 400
