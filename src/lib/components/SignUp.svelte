@@ -133,6 +133,7 @@
 				name="email"
 				placeholder="Email"
 				disabled={false}
+				type="text"
 				on:change={handleChange}
 				bind:value={$form.email}
 				errors={$errors.email}
@@ -149,6 +150,7 @@
 				name="username"
 				placeholder="Username"
 				disabled={false}
+				type="text"
 				on:change={handleChange}
 				bind:value={$form.username}
 				errors={$errors.username}
@@ -158,6 +160,7 @@
 				name="password"
 				placeholder="Password"
 				disabled={false}
+				type="password"
 				on:change={handleChange}
 				bind:value={$form.password}
 				errors={$errors.password}

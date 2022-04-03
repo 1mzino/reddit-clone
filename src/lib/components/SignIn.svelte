@@ -99,6 +99,7 @@
 			name="email"
 			placeholder={$session.user.email ? $session.user.email : 'Email'}
 			disabled={$page.url.search ? true : false}
+			type="text"
 			on:change={handleChange}
 			bind:value={$form.email}
 			errors={$errors.email}
@@ -108,6 +109,7 @@
 			name="password"
 			placeholder={$session.user.authenticated ? '********' : 'Password'}
 			disabled={$page.url.search ? true : false}
+			type="password"
 			on:change={handleChange}
 			bind:value={$form.password}
 			errors={$errors.password}
@@ -118,7 +120,7 @@
 				type="submit"
 				disabled={$page.url.search ? true : false}
 				class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
-		lg:from-sky-600 lg:to-sky-600 text-white font-bold disabled:opacity-30"
+		lg:from-sky-600 lg:to-sky-600 text-white font-bold disabled:opacity-40"
 			>
 				{#if $page.url.search}
 					Logging In
