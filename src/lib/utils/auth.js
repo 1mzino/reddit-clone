@@ -35,7 +35,7 @@ export const signIn = async (email, password) => {
 	}
 
 	return errorMapper({
-		message: `The email that you've entered doesn't belong to an account. Please check your email and try again.`,
+		message: error.message,
 		code: 400
 	});
 };
