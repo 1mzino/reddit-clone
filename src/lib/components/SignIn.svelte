@@ -6,6 +6,7 @@
 	import { signIn, googleAuth } from '$lib/utils/auth';
 
 	import { createEventDispatcher } from 'svelte';
+	import InputField from './InputField.svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -94,52 +95,24 @@
 	</div>
 	<!-- sign in with email -->
 	<form on:submit|preventDefault={handleSubmit} class="space-y-4 lg:max-w-[60%]">
-		<div class="space-y-2 lg:space-y-1">
-			<div class="relative flex items-center">
-				<input
-					name="email"
-					on:change={handleChange}
-					disabled={$page.url.search ? true : false}
-					bind:value={$form.email}
-					class={`rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 ${
-						$page.url.search
-							? 'lg:bg-yellow-100 placeholder:text-black'
-							: 'lg:bg-white placeholder:text-gray-600'
-					}`}
-					type="text"
-					placeholder={$session.user.email ? $session.user.email : 'Email'}
-				/>
-				{#if $errors.email}
-					<p class="absolute right-6 lg:right-4 text-md text-red-500 font-medium">!</p>
-				{/if}
-			</div>
-			{#if $errors.email}
-				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.email}</p>
-			{/if}
-		</div>
+		<InputField
+			name="email"
+			placeholder={$session.user.email ? $session.user.email : 'Email'}
+			disabled={$page.url.search ? true : false}
+			on:change={handleChange}
+			bind:value={$form.email}
+			errors={$errors.email}
+		/>
 
-		<div class="space-y-2 lg:space-y-1">
-			<div class="relative flex  items-center">
-				<input
-					on:change={handleChange}
-					disabled={$page.url.search ? true : false}
-					bind:value={$form.password}
-					class={`rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 ${
-						$page.url.search
-							? 'lg:bg-yellow-100 placeholder:text-black'
-							: 'lg:bg-white placeholder:text-gray-600'
-					}`}
-					type="password"
-					placeholder={$session.user.authenticated ? '********' : 'Password'}
-				/>
-				{#if $errors.password}
-					<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
-				{/if}
-			</div>
-			{#if $errors.password}
-				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.password}</p>
-			{/if}
-		</div>
+		<InputField
+			name="password"
+			placeholder={$session.user.authenticated ? '********' : 'Password'}
+			disabled={$page.url.search ? true : false}
+			on:change={handleChange}
+			bind:value={$form.password}
+			errors={$errors.password}
+		/>
+
 		<div class="space-y-2">
 			<button
 				type="submit"
@@ -147,7 +120,7 @@
 				class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
 		lg:from-sky-600 lg:to-sky-600 text-white font-bold disabled:opacity-30"
 			>
-				{#if $page.url.search === '? $page.url.search'}
+				{#if $page.url.search}
 					Logging In
 				{:else}
 					Log In
@@ -159,6 +132,7 @@
 			{/if}
 		</div>
 	</form>
+
 	<p class="mt-12 text-sm text-gray-800 lg:text-xs">
 		New to Reddit? <span
 			on:click={() => dispatch('handleAuthState', 'SIGN-UP')}

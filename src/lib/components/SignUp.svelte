@@ -1,16 +1,14 @@
 <script>
-	import { goto } from '$app/navigation';
 	import { googleAuth, signUp } from '$lib/utils/auth';
+	import { createForm } from 'svelte-forms-lib';
 	import * as yup from 'yup';
 
-	import { createForm } from 'svelte-forms-lib';
-
 	import { createEventDispatcher } from 'svelte';
-
 	const dispatch = createEventDispatcher();
+	import InputField from './InputField.svelte';
 
-	let formState = 'SIGN-UP';
 	let formError;
+	let formState = 'SIGN-UP';
 	const handleFormState = (newState) => {
 		formState = newState;
 	};
@@ -131,24 +129,14 @@
 		class="space-y-4 lg:w-[60%]"
 	>
 		{#if formState === 'SIGN-UP'}
-			<div class="space-y-1">
-				<div class="relative flex items-center">
-					<input
-						name="email"
-						on:change={handleChange}
-						bind:value={$form.email}
-						class="rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
-						type="text"
-						placeholder="Email"
-					/>
-					{#if $errors.email}
-						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
-					{/if}
-				</div>
-				{#if $errors.email}
-					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.email}</p>
-				{/if}
-			</div>
+			<InputField
+				name="email"
+				placeholder="Email"
+				disabled={false}
+				on:change={handleChange}
+				bind:value={$form.email}
+				errors={$errors.email}
+			/>
 
 			<button
 				on:click={() => handleFormState('CREATE-PROFILE')}
@@ -157,56 +145,39 @@
 				>Continue</button
 			>
 		{:else if formState === 'CREATE-PROFILE'}
-			<div class="space-y-1">
-				<div class="relative flex items-center">
-					<input
-						name="username"
-						on:change={handleChange}
-						bind:value={$form.username}
-						type="text"
-						placeholder="Username"
-						class="rounded-full w-full lg:rounded-sm  lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
-					/>
-					{#if $errors.username}
-						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
-					{/if}
-				</div>
-				{#if $errors.username}
-					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.username}</p>
-				{/if}
-			</div>
+			<InputField
+				name="username"
+				placeholder="Username"
+				disabled={false}
+				on:change={handleChange}
+				bind:value={$form.username}
+				errors={$errors.username}
+			/>
 
-			<div class="space-y-1">
-				<div class="relative flex items-center">
-					<input
-						name="password"
-						on:change={handleChange}
-						bind:value={$form.password}
-						class="rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 lg:bg-white placeholder:text-gray-600"
-						type="password"
-						placeholder="Password"
-					/>
-					{#if $errors.password}
-						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
-					{/if}
-				</div>
-				{#if $errors.password}
-					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.password}</p>
-				{/if}
-			</div>
-			<div class="space-y-1">
+			<InputField
+				name="password"
+				placeholder="Password"
+				disabled={false}
+				on:change={handleChange}
+				bind:value={$form.password}
+				errors={$errors.password}
+			/>
+
+			<div class="space-y-2">
 				<button
 					type="submit"
 					disabled={false}
 					class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]   lg:from-sky-600 lg:to-sky-600 text-white font-bold"
 					>Sign Up</button
 				>
+
 				{#if formError}
 					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{formError}</p>
 				{/if}
 			</div>
 		{/if}
 	</form>
+
 	<p class="mt-12 text-sm text-gray-800 lg:text-xs">
 		Already a redditor? <span
 			on:click={() => dispatch('handleAuthState', 'SIGN-IN')}
