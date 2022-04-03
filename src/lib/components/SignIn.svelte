@@ -2,27 +2,34 @@
 	import { goto } from '$app/navigation';
 	import { page, session } from '$app/stores';
 	import { createForm } from 'svelte-forms-lib';
-
+	import * as yup from 'yup';
 	import { signIn, googleAuth } from '$lib/utils/auth';
 
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
+	let formError;
 	const handleSignIn = () => {
 		dispatch('closeModal', 'CLOSE');
 		goto('/');
 	};
 
-	$: oauth = $page.url.search;
-	const { form, handleChange, handleSubmit } = createForm({
+	const { form, errors, handleChange, handleSubmit } = createForm({
 		initialValues: {
 			email: '',
 			password: ''
 		},
+		validationSchema: yup.object().shape({
+			email: yup.string().email('You must enter a valid email').required('Email is required'),
+			password: yup.string().required('Password is required')
+		}),
 		onSubmit: async (values) => {
-			const user = await signIn(values.email, values.password);
-			if (user) return handleSignIn();
+			const res = await signIn(values.email, values.password);
+			console.log(res);
+			if (res.status === 'failed') return (formError = res.message);
+
+			return handleSignIn();
 		}
 	});
 </script>
@@ -42,7 +49,7 @@
 	<!-- social providers -->
 	<div class="mt-8 space-y-4 lg:w-[60%]">
 		<button
-			disabled={$page.url.search === '?oauth' ? true : false}
+			disabled={$page.url.search ? true : false}
 			on:click={googleAuth}
 			class="relative rounded-full w-full py-2.5 border-[1px] border-gray-200 active:border-blue-200 active:bg-blue-50 text-gray-600 font-medium"
 		>
@@ -73,7 +80,7 @@
 			</p>
 		</button>
 
-		{#if $page.url.search === '?oauth'}
+		{#if $page.url.search}
 			<p class="text-sm lg:text-xs text-blue-500 font-medium animate-pulse">
 				You are now logged in. You will soon be redirected.
 			</p>
@@ -86,41 +93,71 @@
 		</div>
 	</div>
 	<!-- sign in with email -->
-	<form on:submit={handleSubmit} class="space-y-4 lg:max-w-[60%]">
-		<input
-			on:change={handleChange}
-			disabled={$page.url.search === '?oauth' ? true : false}
-			bind:value={$form.email}
-			class={`rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 lg:${
-				$page.url.search === '?oauth' ? 'bg-yellow-100' : 'bg-white'
-			} lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600`}
-			type="text"
-			placeholder={$session.user.email ? $session.user.email : 'Email'}
-		/>
-
-		<input
-			on:change={handleChange}
-			disabled={$page.url.search === '?oauth' ? true : false}
-			bind:value={$form.password}
-			class={`rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 ${
-				$page.url.search === '?oauth' ? 'lg:bg-yellow-100' : 'lg:bg-white'
-			} lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600`}
-			type="password"
-			placeholder={$session.user.authenticated ? '********' : 'Password'}
-		/>
-
-		<button
-			type="submit"
-			disabled={$page.url.search === '?oauth' ? true : false}
-			class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
-			lg:from-sky-600 lg:to-sky-600 text-white font-bold"
-		>
-			{#if $page.url.search === '?oauth'}
-				Logging In
-			{:else}
-				Log In
+	<form on:submit|preventDefault={handleSubmit} class="space-y-4 lg:max-w-[60%]">
+		<div class="space-y-2 lg:space-y-1">
+			<div class="relative flex items-center">
+				<input
+					name="email"
+					on:change={handleChange}
+					disabled={$page.url.search ? true : false}
+					bind:value={$form.email}
+					class={`rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 ${
+						$page.url.search
+							? 'lg:bg-yellow-100 placeholder:text-black'
+							: 'lg:bg-white placeholder:text-gray-600'
+					}`}
+					type="text"
+					placeholder={$session.user.email ? $session.user.email : 'Email'}
+				/>
+				{#if $errors.email}
+					<p class="absolute right-6 lg:right-4 text-md text-red-500 font-medium">!</p>
+				{/if}
+			</div>
+			{#if $errors.email}
+				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.email}</p>
 			{/if}
-		</button>
+		</div>
+
+		<div class="space-y-2 lg:space-y-1">
+			<div class="relative flex  items-center">
+				<input
+					on:change={handleChange}
+					disabled={$page.url.search ? true : false}
+					bind:value={$form.password}
+					class={`rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 ${
+						$page.url.search
+							? 'lg:bg-yellow-100 placeholder:text-black'
+							: 'lg:bg-white placeholder:text-gray-600'
+					}`}
+					type="password"
+					placeholder={$session.user.authenticated ? '********' : 'Password'}
+				/>
+				{#if $errors.password}
+					<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
+				{/if}
+			</div>
+			{#if $errors.password}
+				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.password}</p>
+			{/if}
+		</div>
+		<div class="space-y-2">
+			<button
+				type="submit"
+				disabled={$page.url.search ? true : false}
+				class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
+		lg:from-sky-600 lg:to-sky-600 text-white font-bold disabled:opacity-30"
+			>
+				{#if $page.url.search === '? $page.url.search'}
+					Logging In
+				{:else}
+					Log In
+				{/if}
+			</button>
+
+			{#if formError}
+				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{formError}</p>
+			{/if}
+		</div>
 	</form>
 	<p class="mt-12 text-sm text-gray-800 lg:text-xs">
 		New to Reddit? <span

@@ -1,27 +1,43 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { googleAuth, signUp } from '$lib/utils/auth';
+	import * as yup from 'yup';
 
 	import { createForm } from 'svelte-forms-lib';
 
 	import { createEventDispatcher } from 'svelte';
+
 	const dispatch = createEventDispatcher();
 
 	let formState = 'SIGN-UP';
-
+	let formError;
 	const handleFormState = (newState) => {
 		formState = newState;
 	};
 
-	const { form, handleChange, handleSubmit } = createForm({
+	const { form, errors, touched, handleChange, handleSubmit } = createForm({
 		initialValues: {
 			email: '',
 			username: '',
 			password: ''
 		},
+		validationSchema: yup.object().shape({
+			email: yup.string().email('You must enter a valid email').required('Email is required'),
+			username: yup
+				.string()
+				.min(3, 'Username must be between 3 and 20 characters')
+				.max(20, 'Username must be between 3 and 20 characters')
+				.required('Username is required'),
+			password: yup
+				.string()
+				.min(6, 'Password must be at least 6 characters')
+				.required('Password is required')
+		}),
 		onSubmit: async (values) => {
-			const user = await signUp(values.email, values.password, values.username);
-			if (user) return goto('/');
+			const res = await signUp(values.email, values.password, values.username);
+			if (res.status === 'failed') return (formError = res.message);
+
+			return dispatch('handleAuthState', 'SIGN-IN');
 		}
 	});
 </script>
@@ -83,7 +99,11 @@
 		<div class="space-y-1">
 			<div class="flex items-center justify-between">
 				<span class="inline-flex items-center space-x-3">
-					<button on:click={() => handleFormState('SIGN-UP')}>
+					<button
+						on:click={() => {
+							handleFormState('SIGN-UP');
+						}}
+					>
 						<svg class="fill-gray-500 h-3" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">
 							<path
 								clip-rule="evenodd"
@@ -101,47 +121,90 @@
 	{/if}
 
 	<!-- sign up with email -->
-	<form on:submit|preventDefault={handleSubmit} class="space-y-4 lg:w-[60%]">
+	<form
+		on:submit|preventDefault={(e) => {
+			if ($errors.email) {
+				return (formState = 'SIGN-UP');
+			}
+			return handleSubmit(e);
+		}}
+		class="space-y-4 lg:w-[60%]"
+	>
 		{#if formState === 'SIGN-UP'}
-			<input
-				on:change={handleChange}
-				bind:value={$form.email}
-				class="rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
-				type="text"
-				placeholder="Email"
-			/>
+			<div class="space-y-1">
+				<div class="relative flex items-center">
+					<input
+						name="email"
+						on:change={handleChange}
+						bind:value={$form.email}
+						class="rounded-full lg:rounded-sm w-full lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
+						type="text"
+						placeholder="Email"
+					/>
+					{#if $errors.email}
+						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
+					{/if}
+				</div>
+				{#if $errors.email}
+					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.email}</p>
+				{/if}
+			</div>
 
 			<button
 				on:click={() => handleFormState('CREATE-PROFILE')}
-				disabled={false}
-				class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717] lg:from-sky-600 lg:to-sky-600 text-white font-bold"
+				disabled={$touched.email && $errors.email ? true : false}
+				class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717] lg:from-sky-600 lg:to-sky-600 text-white font-bold cursor-pointer"
 				>Continue</button
 			>
 		{:else if formState === 'CREATE-PROFILE'}
-			<input
-				name="username"
-				on:change={handleChange}
-				bind:value={$form.username}
-				type="text"
-				placeholder="Username"
-				class="rounded-full w-full lg:rounded-sm  lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
-			/>
+			<div class="space-y-1">
+				<div class="relative flex items-center">
+					<input
+						name="username"
+						on:change={handleChange}
+						bind:value={$form.username}
+						type="text"
+						placeholder="Username"
+						class="rounded-full w-full lg:rounded-sm  lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
+					/>
+					{#if $errors.username}
+						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
+					{/if}
+				</div>
+				{#if $errors.username}
+					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.username}</p>
+				{/if}
+			</div>
 
-			<input
-				name="password"
-				on:change={handleChange}
-				bind:value={$form.password}
-				type="password"
-				placeholder="Password"
-				class="rounded-full w-full lg:rounded-sm  lg:text-sm bg-gray-100 lg:bg-transparent lg:border-[1px] border-gray-200 px-4 py-2 placeholder:text-gray-600"
-			/>
-
-			<button
-				type="submit"
-				disabled={false}
-				class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]   lg:from-sky-600 lg:to-sky-600 text-white font-bold"
-				>Sign Up</button
-			>
+			<div class="space-y-1">
+				<div class="relative flex items-center">
+					<input
+						name="password"
+						on:change={handleChange}
+						bind:value={$form.password}
+						class="rounded-full lg:rounded-sm w-full px-4 py-2 lg:text-sm bg-gray-100  lg:border-[1px] border-gray-200 lg:bg-white placeholder:text-gray-600"
+						type="password"
+						placeholder="Password"
+					/>
+					{#if $errors.password}
+						<p class="absolute right-6 lg:right-4  text-md text-red-500 font-medium">!</p>
+					{/if}
+				</div>
+				{#if $errors.password}
+					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{$errors.password}</p>
+				{/if}
+			</div>
+			<div class="space-y-1">
+				<button
+					type="submit"
+					disabled={false}
+					class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]   lg:from-sky-600 lg:to-sky-600 text-white font-bold"
+					>Sign Up</button
+				>
+				{#if formError}
+					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{formError}</p>
+				{/if}
+			</div>
 		{/if}
 	</form>
 	<p class="mt-12 text-sm text-gray-800 lg:text-xs">
