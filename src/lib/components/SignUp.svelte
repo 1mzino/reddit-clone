@@ -32,7 +32,7 @@
 				.required('Password is required')
 		}),
 		onSubmit: async (values) => {
-			const res = await signUp(values.email, values.password, values.username);
+			const res = await signUp(values.email, values.password, values.username.toLowerCase());
 			if (res.status === 'failed') return (formError = res.message);
 
 			return dispatch('handleAuthState', 'SIGN-IN');
@@ -141,8 +141,8 @@
 
 			<button
 				on:click={() => handleFormState('CREATE-PROFILE')}
-				disabled={$touched.email && $errors.email ? true : false}
-				class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717] lg:from-sky-600 lg:to-sky-600 text-white font-bold cursor-pointer"
+				disabled={!$touched.email || $errors.email ? true : false}
+				class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717] lg:from-sky-600 lg:to-sky-600 text-white font-bold cursor-pointer disabled:cursor-not-allowed"
 				>Continue</button
 			>
 		{:else if formState === 'CREATE-PROFILE'}
