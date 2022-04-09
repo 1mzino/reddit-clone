@@ -15,7 +15,7 @@
 	/>
 	<!-- modal content -->
 	<div class="flex rounded-md h-[600px] w-[705px] bg-white z-50">
-		<div class="hidden lg:block bg-[url('/authBg.png')] w-1/4 h-full rounded-l-md" />
+		<div class="hidden bg-cover lg:block bg-[url('/authBg.png')] w-1/6 h-full rounded-l-md" />
 		<div class="w-3/4 px-4">
 			{#if authState === 'SIGN-UP'}
 				<SignUp on:handleAuthState />

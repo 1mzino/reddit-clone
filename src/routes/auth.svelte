@@ -23,9 +23,9 @@
 	};
 </script>
 
-<div class="flex h-screen w-screen lg:fixed top-0 lg:z-50 bg-white">
-	<div class="hidden lg:block bg-[url('/authBg.png')] w-1/6 min-h-max rounded-l-md" />
-	<div class="lg:w-2/5 lg:px-4 ">
+<div class="flex lg:h-full grow w-full lg:fixed top-0 lg:z-50 bg-white">
+	<div class="hidden bg-cover lg:block bg-[url('/authBg.png')] w-1/12 min-h-max rounded-l-md" />
+	<div class="w-full lg:w-2/5 lg:px-4 ">
 		{#if authState === 'SIGN-UP'}
 			<SignUp on:handleAuthState={handleAuthState} />
 		{:else}
