@@ -6,11 +6,14 @@ import { getProfileById } from '$lib/utils/getProfile';
 export async function handleAuth({ event, resolve }) {
 	// Converts request to have `req.headers.cookie` on `req.cookies, as `getUserByCookie` expects parsed cookies on `req.cookies`
 	const request = event.request;
+
 	const expressStyleRequest = await toExpressRequest(request);
+
 	const { user } = await supabase.auth.api.getUserByCookie(expressStyleRequest);
 	const profile = await getProfileById(user?.id);
-	event.locals.token = expressStyleRequest.cookies['sb:token'] || undefined;
+	event.locals.token = expressStyleRequest.cookies['sb-access-token'] || undefined;
 	event.locals.user = combinedUserMapper({ ...user, ...profile });
+	event.locals.theme = expressStyleRequest.cookies['theme'] || undefined;
 
 	// if we have a token, set the client to use it so we can make authorized requests to Supabase
 	if (event.locals.token) {
