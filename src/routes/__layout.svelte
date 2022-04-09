@@ -1,3 +1,13 @@
+<script context="module">
+	export async function load({ session }) {
+		return {
+			props: {
+				theme: session.theme
+			}
+		};
+	}
+</script>
+
 <script>
 	import { page } from '$app/stores';
 	import supabase from '$lib/supabase';
@@ -10,10 +20,15 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+
 	import { onMount } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
 
+	import { setTheme } from '$lib/store/theme';
+	export let theme;
+
 	let authState = $page.url.search ? 'SIGN-IN' : 'SIGN-UP';
+
 	let showAuthModal = $page.url.search ? true : false;
 	let showLoading = $page.url.search ? true : false;
 	let showMenu = false;
@@ -28,6 +43,11 @@
 			return (showUsername = true);
 		}
 	});
+
+	const toggleDarkMode = () => {
+		const nextTheme = theme === 'dark' ? 'light' : 'dark';
+		setTheme(nextTheme);
+	};
 
 	const toggleAuthModal = (e) => {
 		if (e.detail === 'CLOSE') {
@@ -48,23 +68,29 @@
 
 	supabase.auth.onAuthStateChange(async (event, _session) => {
 		if (event === 'SIGNED_OUT') {
-			session.set({ user: combinedUserMapper({}) });
+			// @ts-ignore
+			session.set({ user: combinedUserMapper({}), theme });
 			await unsetAuthCookie();
 		}
 		if (event === 'SIGNED_IN') {
 			const sessionUser = _session.user;
 			const profile = await getProfileById(sessionUser?.id);
 			const user = combinedUserMapper({ ...sessionUser, ...profile });
-			session.set({ user });
+			// @ts-ignore
+			session.set({ user, theme });
 			await setAuthCookie(_session);
 		}
 	});
 </script>
 
-<div class="flex flex-col min-h-screen w-screen bg-white touch-manipulation">
-	<Navbar on:openModal={toggleAuthModal} on:handleMenuClick={toggleMenu} {showMenu} {showLoading} />
-
-	<!-- children -->
+<div class={`${theme} flex flex-col min-h-screen w-screen bg-white touch-manipulation`}>
+	<Navbar
+		on:toggleDarkMode={toggleDarkMode}
+		on:openModal={toggleAuthModal}
+		on:handleMenuClick={toggleMenu}
+		{showMenu}
+		{showLoading}
+	/>
 
 	<slot />
 
@@ -79,7 +105,7 @@
 	<!-- Mobile oauth loading -->
 	{#if showLoading}
 		<div
-			class="fixed top-[48px] lg:hidden h-full w-full flex items-center bg-redditDarkBlue justify-center z-30 "
+			class="fixed top-[48px] lg:hidden h-full w-full flex items-center bg-redditDarkBlue dark:bg-zinc-900 justify-center z-30 "
 		>
 			<div class="grow flex justify-center items-center">
 				<svg class="animate-bounce mb-12 h-[72px] w-[72px]" viewBox="0 0 20 20">
