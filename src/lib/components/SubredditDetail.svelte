@@ -13,8 +13,10 @@
 	};
 </script>
 
-<div class=" border-b-[1px] bg-white  border-gray-200">
-	<div class="flex flex-col lg:flex-row items-center gap-2 px-2 md:px-6  lg:mb-2 -mt-8 lg:-mt-4">
+<div class=" border-b-[1px] bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800">
+	<div
+		class="flex flex-col lg:flex-row items-center gap-2 px-2 md:px-6 lg:px-60  lg:mb-2 -mt-8 lg:-mt-4"
+	>
 		<div
 			class="rounded-full p-1 md:p-1.5 bg-white lg:border-4 border-[1px] border-gray-100 lg:border-white"
 		>
@@ -40,12 +42,14 @@
 		</div>
 
 		<div
-			class="flex flex-col items-center lg:items-start space-y-2 lg:space-y-1 md:mt-4 px-4 text-sm text-zinc-400"
+			class="flex flex-col items-center lg:items-start space-y-2 lg:space-y-1 md:mt-4 px-4 text-sm text-zinc-400 dark:text-zinc-300"
 		>
-			<h1 class="text-xl text-center  md:text-[28px] text-black font-bold">
+			<h1
+				class="text-xl text-center md:text-[28px] whitespace-nowrap text-black dark:text-gray-100 font-bold"
+			>
 				Svelte the JavaScript Non-Framework
 			</h1>
-			<p>r/sveltejs</p>
+			<p class="font-medium">r/sveltejs</p>
 
 			<!-- ABOUT SUBREDDIT COMPONENT -->
 			<div class="lg:hidden space-y-2 flex flex-col items-center md:px-8">
@@ -63,7 +67,7 @@
 					{/if}
 				</div>
 
-				<span class="flex text-black">
+				<span class="flex text-black dark:text-gray-100">
 					<p><strong>13.5k</strong> members</p>
 					<p><span class="text-xs mx-2">•</span><strong>24</strong> online</p>
 				</span>
@@ -81,14 +85,22 @@
 			<button
 				on:click={() => handleTabSwitch('POSTS')}
 				class={`w-[50%] pb-2 border-b-2 text-sm font-semibold 
-					${tabs === 'POSTS' ? 'text-blue-600 border-blue-600' : 'text-gray-400 border-transparent'} `}
+					${
+						tabs === 'POSTS'
+							? 'text-blue-600 dark:text-blue-500 border-blue-600'
+							: 'text-gray-400 border-transparent'
+					} `}
 			>
 				POSTS
 			</button>
 			<button
 				on:click={() => handleTabSwitch('ABOUT')}
 				class={`w-[50%] pb-2 border-b-2 text-sm font-semibold
-					${tabs === 'ABOUT' ? 'text-blue-600 border-blue-600' : 'text-gray-400 border-transparent'}`}
+					${
+						tabs === 'ABOUT'
+							? 'text-blue-600 dark:text-blue-500 border-blue-600'
+							: 'text-gray-400 border-transparent'
+					}`}
 			>
 				ABOUT
 			</button>

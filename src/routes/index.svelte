@@ -14,7 +14,7 @@
 	<SubredditDetail on:handleTabSwitch={handleTabSwitch} {tabs} />
 
 	<!-- page -->
-	<div class="bg-zinc-100 grow">
+	<div class="bg-zinc-100 dark:bg-black grow">
 		{#if tabs == 'POSTS'}
 			<p />
 		{:else if tabs == 'ABOUT'}
