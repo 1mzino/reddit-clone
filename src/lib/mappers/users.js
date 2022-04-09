@@ -1,7 +1,8 @@
 import { withDefault } from './internal.js';
 
-export const userMapper = (user) => ({
-	username: withDefault(user.username, null)
+export const userMapper = ({ username, karma }) => ({
+	username: withDefault(username, null),
+	karma: withDefault(karma, 0)
 });
 
 export const userToDBMapper = (user) => ({
