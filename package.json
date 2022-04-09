@@ -30,6 +30,7 @@
     "cookie": "^0.4.2",
     "jsonwebtoken": "^8.5.1",
     "svelte-forms-lib": "^2.0.1",
+    "svelte-outside-click": "^1.1.1",
     "yup": "^0.32.11"
   }
 }
