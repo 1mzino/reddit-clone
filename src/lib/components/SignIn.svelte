@@ -27,7 +27,6 @@
 		}),
 		onSubmit: async (values) => {
 			const res = await signIn(values.email, values.password);
-			console.log(res);
 			if (res.status === 'failed') return (formError = res.message);
 
 			return handleSignIn();
