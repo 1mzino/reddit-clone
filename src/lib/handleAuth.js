@@ -13,7 +13,7 @@ export async function handleAuth({ event, resolve }) {
 	const profile = await getProfileById(user?.id);
 	event.locals.token = expressStyleRequest.cookies['sb-access-token'] || undefined;
 	event.locals.user = combinedUserMapper({ ...user, ...profile });
-	event.locals.theme = expressStyleRequest.cookies['theme'] || undefined;
+	event.locals.theme = expressStyleRequest.cookies['theme'] || 'light';
 
 	// if we have a token, set the client to use it so we can make authorized requests to Supabase
 	if (event.locals.token) {
