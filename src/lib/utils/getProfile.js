@@ -1,5 +1,5 @@
 import { errorMapper, successMapper } from '$lib/mappers/internal';
-import { usersMapper } from '$lib/mappers/users';
+
 import supabase from '$lib/supabase';
 
 export const getProfile = async () => {
@@ -12,21 +12,17 @@ export const getProfileById = async (userId) => {
 	return data;
 };
 
-export const getProfiles = async () => {
-	const { error, data } = await supabase
-		.from('profiles')
-		.select('*')
-		.not('is_admin', 'eq', true)
-		.order('created_at', { ascending: false });
+export const updateProfileUsername = async (userId, username) => {
+	const { error } = await supabase.from('profiles').update({ username }).eq('id', userId);
 
 	if (!error) {
 		return successMapper({
-			data: usersMapper(data),
-			message: ''
+			message: 'Updated username successfully.'
 		});
 	}
 
 	return errorMapper({
-		message: ''
+		message: error.message,
+		code: 400
 	});
 };
