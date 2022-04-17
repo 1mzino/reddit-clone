@@ -22,10 +22,14 @@
 	import Modal from '$lib/components/Modal.svelte';
 
 	import { onMount } from 'svelte';
-	import { fade, slide } from 'svelte/transition';
 
 	import { setTheme } from '$lib/store/theme';
+	import UsernameForm from '$lib/components/UsernameForm.svelte';
+	import LoadingScreen from '$lib/components/LoadingScreen.svelte';
+
 	export let theme;
+	console.log(theme);
+	console.log($session);
 
 	let authState = $page.url.search ? 'SIGN-IN' : 'SIGN-UP';
 
@@ -33,21 +37,6 @@
 	let showLoading = $page.url.search ? true : false;
 	let showMenu = false;
 	let showUsername = false;
-
-	onMount(() => {
-		if ($page.url.search === '?oauth') {
-			return setTimeout(() => (window.location.href = 'http://localhost:3000/'), 1500);
-		}
-
-		if ($session.user.authenticated && !$session.user.username) {
-			return (showUsername = true);
-		}
-	});
-
-	const toggleDarkMode = () => {
-		const nextTheme = theme === 'dark' ? 'light' : 'dark';
-		setTheme(nextTheme);
-	};
 
 	const toggleAuthModal = (e) => {
 		if (e.detail === 'CLOSE') {
@@ -66,7 +55,14 @@
 		showMenu = !showMenu;
 	};
 
+	const toggleDarkMode = () => {
+		const nextTheme = theme === 'dark' ? 'light' : 'dark';
+		setTheme(nextTheme);
+	};
+
+	// set supabase cookie on event
 	supabase.auth.onAuthStateChange(async (event, _session) => {
+		console.log(_session);
 		if (event === 'SIGNED_OUT') {
 			// @ts-ignore
 			session.set({ user: combinedUserMapper({}), theme });
@@ -76,9 +72,25 @@
 			const sessionUser = _session.user;
 			const profile = await getProfileById(sessionUser?.id);
 			const user = combinedUserMapper({ ...sessionUser, ...profile });
+
 			// @ts-ignore
 			session.set({ user, theme });
+			// session.update((current) => {
+			// 	return { ...current, user };
+			// });
 			await setAuthCookie(_session);
+		}
+	});
+
+	onMount(async () => {
+		// after oauth redirects and set session,
+		if ($page.url.search === '?oauth') {
+			return setTimeout(() => (window.location.href = 'http://localhost:3000/'), 1500);
+		}
+
+		if ($session.user.authenticated && !$session.user.username) {
+			showUsername = true;
+			return;
 		}
 	});
 </script>
@@ -92,6 +104,7 @@
 		{showLoading}
 	/>
 
+	<!-- Current page -->
 	<slot />
 
 	<!-- Menu as 'portal' -->
@@ -104,48 +117,23 @@
 
 	<!-- Mobile oauth loading -->
 	{#if showLoading}
-		<div
-			class="fixed top-[48px] lg:hidden h-full w-full flex items-center bg-redditDarkBlue dark:bg-zinc-900 justify-center z-30 "
-		>
-			<div class="grow flex justify-center items-center">
-				<svg class="animate-bounce mb-12 h-[72px] w-[72px]" viewBox="0 0 20 20">
-					>
-					<circle fill="#FF4500" cx="10" cy="10" r="10" /><path
-						fill="#FFF"
-						d="M16.67,10A1.46,1.46,0,0,0,14.2,9a7.12,7.12,0,0,0-3.85-1.23L11,4.65,13.14,5.1a1,1,0,1,0,.13-0.61L10.82,4a0.31,0.31,0,0,0-.37.24L9.71,7.71a7.14,7.14,0,0,0-3.9,1.23A1.46,1.46,0,1,0,4.2,11.33a2.87,2.87,0,0,0,0,.44c0,2.24,2.61,4.06,5.83,4.06s5.83-1.82,5.83-4.06a2.87,2.87,0,0,0,0-.44A1.46,1.46,0,0,0,16.67,10Zm-10,1a1,1,0,1,1,1,1A1,1,0,0,1,6.67,11Zm5.81,2.75a3.84,3.84,0,0,1-2.47.77,3.84,3.84,0,0,1-2.47-.77,0.27,0.27,0,0,1,.38-0.38A3.27,3.27,0,0,0,10,14a3.28,3.28,0,0,0,2.09-.61A0.27,0.27,0,1,1,12.48,13.79Zm-0.18-1.71a1,1,0,1,1,1-1A1,1,0,0,1,12.29,12.08Z"
-					/></svg
-				>
-			</div>
-		</div>
+		<LoadingScreen />
 	{/if}
 
-	{#if !$page.url.search && showUsername}
-		<div class="fixed top-0 z-40 flex flex-col h-full w-full touch-none">
-			<div
-				transition:fade|local={{ duration: 100 }}
-				class="fixed top-0 h-full w-full z-40 bg-black opacity-90"
-			/>
-			<div class="flex justify-center items-center">
-				<div
-					in:slide|local
-					class="fixed bottom-0 lg:top-[33%] flex flex-col items-center h-max w-full lg:w-max lg:px-10 lg:py-6 py-8 px-2 gap-6 bg-white z-50 rounded-t-2xl lg:rounded-2xl"
-				>
-					<img
-						class="h-12 w-12 object-contain rounded-full bg-gray-100 px-1 py-0.5"
-						src="/superhero.png"
-						alt="superhero snoo"
-					/>
-					<p class="text-center text-sm font-medium">
-						Before continuing, you must create your Reddit username.
-					</p>
+	<!-- Create Profile -->
+	{#if showUsername}
+		<UsernameForm
+			on:closeModal={async () => {
+				const profile = await getProfileById($session.user.id);
+				const sessionUser = $session.user;
 
-					<button
-						on:click={() => (showUsername = false)}
-						class="text-sm text-white font-bold rounded-full bg-blue-500 py-2 px-16"
-						>Continue</button
-					>
-				</div>
-			</div>
-		</div>
+				let user = { ...sessionUser, username: profile.username };
+				session.update((current) => {
+					return { ...current, user };
+				});
+
+				showUsername = false;
+			}}
+		/>
 	{/if}
 </div>
