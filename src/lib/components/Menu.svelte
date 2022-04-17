@@ -24,9 +24,10 @@
 </script>
 
 {#if showMenu}
-	<div class="fixed top-[49px]  lg:hidden flex flex-col h-full w-full">
-		<div on:click={handleMenuClick} class="fixed top-0 h-full w-full bg-black opacity-90 z-20" />
-
+	<div
+		on:click|self={handleMenuClick}
+		class="fixed top-[49px] lg:hidden flex flex-col h-full w-full bg-black/90"
+	>
 		<div
 			class="h-30 flex flex-col space-y-4 px-3 pt-3 pb-6 bg-redditDarkBlue dark:bg-zinc-900 z-30"
 		>
