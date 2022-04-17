@@ -2,15 +2,20 @@
 	import SignUp from './SignUp.svelte';
 	import SignIn from './SignIn.svelte';
 	import { createEventDispatcher } from 'svelte';
-
+	import { page } from '$app/stores';
 	const dispatch = createEventDispatcher();
+
 	export let authState;
 </script>
 
 <!-- modal -->
 <div class="hidden lg:flex flex-col items-center justify-center h-full w-full lg:fixed top-0  z-30">
 	<div
-		on:click|self={() => dispatch('closeModal', 'CLOSE')}
+		on:click|self={() => {
+			if (!$page.url.search) {
+				return dispatch('closeModal', 'CLOSE');
+			}
+		}}
 		class="fixed top-0 h-full w-full bg-black opacity-90 z-40"
 	/>
 	<!-- modal content -->
