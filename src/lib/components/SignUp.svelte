@@ -6,7 +6,9 @@
 	import { createEventDispatcher } from 'svelte';
 	const dispatch = createEventDispatcher();
 	import InputField from './InputField.svelte';
+	import Button from './Button.svelte';
 
+	let loading;
 	let formError;
 	let formState = 'SIGN-UP';
 	const handleFormState = (newState) => {
@@ -32,8 +34,13 @@
 				.required('Password is required')
 		}),
 		onSubmit: async (values) => {
+			loading = true;
 			const res = await signUp(values.email, values.password, values.username.toLowerCase());
-			if (res.status === 'failed') return (formError = res.message);
+			if (res.status === 'failed') {
+				formError = res.message;
+				loading = false;
+				return;
+			}
 
 			return dispatch('handleAuthState', 'SIGN-IN');
 		}
@@ -167,12 +174,7 @@
 			/>
 
 			<div class="space-y-2">
-				<button
-					type="submit"
-					disabled={false}
-					class="rounded-full w-full lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]   lg:from-sky-600 lg:to-sky-600 text-white font-bold"
-					>Sign Up</button
-				>
+				<Button {loading} disabled={false}>Sign Up</Button>
 
 				{#if formError}
 					<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{formError}</p>

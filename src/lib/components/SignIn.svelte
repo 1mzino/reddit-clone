@@ -7,13 +7,16 @@
 
 	import { createEventDispatcher } from 'svelte';
 	import InputField from './InputField.svelte';
+	import Button from './Button.svelte';
 
 	const dispatch = createEventDispatcher();
+
+	let loading;
 
 	let formError;
 	const handleSignIn = () => {
 		dispatch('closeModal', 'CLOSE');
-		goto('/');
+		// goto('/');
 	};
 
 	const { form, errors, handleChange, handleSubmit } = createForm({
@@ -26,10 +29,18 @@
 			password: yup.string().required('Password is required')
 		}),
 		onSubmit: async (values) => {
-			const res = await signIn(values.email, values.password);
-			if (res.status === 'failed') return (formError = res.message);
+			loading = true;
 
-			return handleSignIn();
+			const res = await signIn(values.email, values.password);
+			if (res.status === 'failed') {
+				formError = res.message;
+				loading = false;
+
+				return;
+			}
+
+			handleSignIn();
+			return;
 		}
 	});
 </script>
@@ -115,18 +126,9 @@
 		/>
 
 		<div class="space-y-2">
-			<button
-				type="submit"
-				disabled={$page.url.search ? true : false}
-				class="rounded-full w-full   lg:text-sm py-2 bg-gradient-to-r from-[#ec0623] to-[#ff8717]
-		lg:from-sky-600 lg:to-sky-600 text-white font-bold disabled:opacity-40"
+			<Button loading={$page.url.search || loading} disabled={$page.url.search ? true : false}
+				>Log In</Button
 			>
-				{#if $page.url.search}
-					Logging In
-				{:else}
-					Log In
-				{/if}
-			</button>
 
 			{#if formError}
 				<p class="text-xs text-red-500 px-4 lg:px-0 font-medium">{formError}</p>
