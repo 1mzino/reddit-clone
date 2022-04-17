@@ -1,10 +1,11 @@
-// @ts-nocheck
 // import { browser } from '$app/env';
 import { session } from '$app/stores';
 import { derived } from 'svelte/store';
 
 export const theme = derived(session, ($session, set) => {
+	// @ts-ignore
 	if ($session.theme) {
+		// @ts-ignore
 		set($session.theme);
 	}
 	// else if (browser) {
