@@ -3,7 +3,7 @@ export async function put({ request }) {
 
 	return {
 		headers: {
-			'set-cookie': `theme=${theme}; SameSite=Strict; HttpOnly; Secure`
+			'set-cookie': [`theme=${theme}; Path=/; SameSite=Strict; HttpOnly; Secure`]
 		}
 	};
 }
