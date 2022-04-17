@@ -15,7 +15,7 @@
 
 <div class=" border-b-[1px] bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800">
 	<div
-		class="flex flex-col lg:flex-row items-center gap-2 px-2 md:px-6 lg:px-60  lg:mb-2 -mt-8 lg:-mt-4"
+		class="flex flex-col lg:flex-row items-center max-w-5xl mx-auto gap-2 px-2 md:px-6 lg:mb-2 -mt-8 lg:-mt-4"
 	>
 		<div
 			class="rounded-full p-1 md:p-1.5 bg-white lg:border-4 border-[1px] border-gray-100 lg:border-white"
@@ -44,9 +44,7 @@
 		<div
 			class="flex flex-col items-center lg:items-start space-y-2 lg:space-y-1 md:mt-4 px-4 text-sm text-zinc-400 dark:text-zinc-300"
 		>
-			<h1
-				class="text-xl text-center md:text-[28px] whitespace-nowrap text-black dark:text-gray-100 font-bold"
-			>
+			<h1 class="text-xl text-center md:text-[28px] text-black dark:text-gray-100 font-bold">
 				Svelte the JavaScript Non-Framework
 			</h1>
 			<p class="font-medium">r/sveltejs</p>
